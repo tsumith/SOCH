@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:soch/ui/cover.dart';
+import 'package:soch/ui/login/cover.dart';
+import 'package:soch/ui/routes/home.dart';
+import 'package:soch/ui/login/signup.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'ui/signIn.dart';
+import 'ui/login/signIn.dart';
 import 'services/project_keys.dart';
 
 void main() async {
@@ -15,7 +17,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-final SupabaseClient client = Supabase.instance.client;
+final SupabaseClient supabase = Supabase.instance.client;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -29,14 +31,18 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => CoverPage(),
         '/signIn': (context) => SignInPage(),
+        '/signUp': (context) => SignUpPage(),
+        '/home': (context) => HomePage(),
       },
       theme: ThemeData(
         primarySwatch: Colors.yellow,
         inputDecorationTheme: InputDecorationTheme(
           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: Colors.grey), // Global enabled border
           ),
           focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
             borderSide: BorderSide(
                 color: const Color.fromARGB(
                     255, 216, 191, 1)), // Global focused border

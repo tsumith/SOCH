@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:soch/services/auth_service.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -8,73 +8,18 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  TextEditingController _emailController = TextEditingController();
-  SupabaseClient? supabase;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  AuthService authService = AuthService();
   bool loading = false;
-  TextEditingController _passwordController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    supabase = Supabase.instance.client;
-  }
-
-  Future<void> _signIn() async {
-    setState(() {
-      loading = true;
-    });
-    try {
-      await supabase!.auth
-          .signInWithPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      )
-          .then((value) {
-        setState(() {
-          loading = false;
-        });
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  TestScreen(supabase!.auth.currentUser?.email),
-            ));
-      });
-    } on AuthException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.message)),
-      );
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An unexpected error has occured.')),
-      );
-    }
-  }
-
-  Future<void> _signUp() async {
-    try {
-      await supabase!.auth.signUp(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Sign up successful! Check your email to verify.')),
-      );
-    } on AuthException catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.message)),
-      );
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An unexpected error has occured.')),
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    double spacing = 20;
-    // TODO: implement build
+    double spacing = 17;
     return Scaffold(
       body: loading
           ? Center(child: CircularProgressIndicator())
@@ -83,7 +28,7 @@ class _SignInPageState extends State<SignInPage> {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 40,
+                      height: 20,
                     ),
                     Container(
                       height: 200,
@@ -91,15 +36,12 @@ class _SignInPageState extends State<SignInPage> {
                       child: SvgPicture.asset('assets/logo/Soch-logo-white.svg',
                           fit: BoxFit.contain),
                     ),
-                    SizedBox(
-                      height: spacing,
-                    ),
-                    Text("Create an account",
+                    Text("Have an account?",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         )),
-                    Text("Enter your email id to sign in"),
+                    Text("Then let's just sign in!"),
                     SizedBox(
                       height: spacing,
                     ),
@@ -108,8 +50,7 @@ class _SignInPageState extends State<SignInPage> {
                       child: TextField(
                         controller: _emailController,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30))),
+                            border: OutlineInputBorder(), hintText: "email"),
                       ),
                     ),
                     SizedBox(
@@ -120,8 +61,8 @@ class _SignInPageState extends State<SignInPage> {
                       child: TextField(
                         obscureText: true,
                         controller: _passwordController,
-                        decoration:
-                            InputDecoration(border: OutlineInputBorder()),
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(), hintText: "password"),
                       ),
                     ),
                     SizedBox(
@@ -132,7 +73,18 @@ class _SignInPageState extends State<SignInPage> {
                         setState(() {
                           loading = true;
                         });
-                        await _signIn();
+                        await authService
+                            .signIn(
+                                _emailController.text, _passwordController.text)
+                            .then((val) {
+                          Navigator.pushNamed(context, '/home').then((val) {
+                            setState(() {
+                              loading = false;
+                            });
+                          });
+
+                          // ignore: use_build_context_synchronously
+                        });
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width,
@@ -140,6 +92,33 @@ class _SignInPageState extends State<SignInPage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: Colors.yellow,
+                        ),
+                        margin: EdgeInsets.symmetric(horizontal: 30),
+                        height: 50,
+                      ),
+                    ),
+                    SizedBox(
+                      child: Center(
+                          child: Text(
+                        "don't have an account? then let's",
+                        style: TextStyle(fontSize: 12),
+                      )),
+                      height: spacing + 10,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/signUp');
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Center(
+                            child: Text(
+                          "sign up",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color.fromARGB(255, 3, 3, 3),
                         ),
                         margin: EdgeInsets.symmetric(horizontal: 30),
                         height: 50,
@@ -172,18 +151,16 @@ class _SignInPageState extends State<SignInPage> {
                     GestureDetector(
                       child: Container(
                         width: MediaQuery.of(context).size.width,
+                        // ignore: sort_child_properties_last
                         child: Center(
-                          child: Container(
+                          child: SizedBox(
                             height: 30,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
-                                    // decoration: BoxDecoration(color: Colors.blue),
-                                    child: Image.asset(
-                                        'assets/logo/google-logo.png',
-                                        fit: BoxFit.cover)),
+                                Image.asset('assets/logo/google-logo.png',
+                                    fit: BoxFit.cover),
                                 SizedBox(
                                   width: 4.0,
                                 ),
@@ -238,19 +215,6 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               ),
             ),
-    );
-  }
-}
-
-class TestScreen extends StatelessWidget {
-  final String? email;
-  TestScreen(this.email);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text("Welcome $email"),
-      ),
     );
   }
 }
