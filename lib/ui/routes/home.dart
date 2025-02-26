@@ -1,34 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:soch/services/auth_service.dart';
 
-class HomePage extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeState extends State<Home> {
   AuthService authService = AuthService();
+  String? mail;
   @override
-  intiState() {
+  initState() {
     super.initState();
+    mail = authService.getEmail();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(),
-      appBar: AppBar(title: Text('Welcome to SOCH')),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
-        ],
-      ),
-      body: Center(
-        child: Text('Welcome to ${authService.getEmail()}'),
-      ),
+    return Container(
+      child: Center(child: Text("Home ${mail}")),
     );
   }
 }

@@ -78,18 +78,12 @@ class _SignUpPageState extends State<SignUpPage> {
                         setState(() {
                           loading = true;
                         });
-                        await authService
-                            .signUp(
-                          _emailController.text,
-                          _passwordController.text,
-                        )
-                            .then((val) {
-                          Navigator.pushNamed(context, '/signIn').then((val) {
-                            setState(() {
-                              loading = false;
-                            });
-                          });
+                        await authService.signUp(_emailController.text,
+                            _passwordController.text, context);
+                        setState(() {
+                          loading = false;
                         });
+                       
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width,

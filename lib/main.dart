@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:soch/services/auth_check.dart';
 import 'package:soch/ui/login/cover.dart';
-import 'package:soch/ui/routes/home.dart';
+import 'package:soch/ui/routes/home_page.dart';
 import 'package:soch/ui/login/signup.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'ui/login/signIn.dart';
@@ -8,11 +10,12 @@ import 'services/project_keys.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ProjectKeys key = ProjectKeys();
-
+  await dotenv.load(fileName: ".env");
+  final supabaseUrl = dotenv.env['SUPABASE_URL'];
+  final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
   await Supabase.initialize(
-    url: key.url, // Replace with your Supabase URL
-    anonKey: key.anonkey, // Replace with your Supabase anon key
+    url: supabaseUrl!,
+    anonKey: supabaseAnonKey!,
   );
   runApp(const MyApp());
 }
@@ -26,10 +29,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/',
+      initialRoute: '/auth-check',
       title: 'SOCH-anth-hi-arambh',
       routes: {
         '/': (context) => CoverPage(),
+        '/auth-check': (context) => AuthCheck(),
         '/signIn': (context) => SignInPage(),
         '/signUp': (context) => SignUpPage(),
         '/home': (context) => HomePage(),
