@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:soch/services/auth_check.dart';
 import 'package:soch/ui/login/cover.dart';
+import 'package:soch/ui/payments/payhome.dart';
 import 'package:soch/ui/routes/home_page.dart';
 import 'package:soch/ui/login/signup.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'ui/login/signIn.dart';
-import 'services/project_keys.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,28 +16,45 @@ void main() async {
     url: supabaseUrl!,
     anonKey: supabaseAnonKey!,
   );
-  runApp(const MyApp());
+
+  runApp(MyApp());
 }
 
 final SupabaseClient supabase = Supabase.instance.client;
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  MyApp({super.key});
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  User? user;
+  @override
+  void initState() {
+    super.initState();
+    user = Supabase.instance.client.auth.currentUser;
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/auth-check',
+      debugShowCheckedModeBanner: false,
+      initialRoute: user != null ? '/home' : '/',
       title: 'SOCH-anth-hi-arambh',
       routes: {
         '/': (context) => CoverPage(),
-        '/auth-check': (context) => AuthCheck(),
         '/signIn': (context) => SignInPage(),
         '/signUp': (context) => SignUpPage(),
         '/home': (context) => HomePage(),
+        '/payhome': (context) => PayHome(),
       },
       theme: ThemeData(
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.yellow,
+          foregroundColor: Colors.black,
+        ),
         primarySwatch: Colors.yellow,
         inputDecorationTheme: InputDecorationTheme(
           enabledBorder: OutlineInputBorder(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:soch/ui/splash/on_board_screen.dart';
 
 class CoverPage extends StatefulWidget {
   @override
@@ -14,25 +15,29 @@ class _CoverPageState extends State<CoverPage> {
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/start_image.jpg'),
+              image: AssetImage('assets/images/cover2.png'),
               fit: BoxFit.cover,
             ),
           ),
         ),
         Opacity(
-          opacity: 0.60,
+          opacity: 0.02,
           child: Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                  const Color.fromARGB(255, 228, 225, 44),
-                  const Color.fromARGB(255, 166, 167, 161),
-                  const Color.fromARGB(255, 170, 156, 74),
-                  const Color.fromARGB(255, 122, 122, 89),
-                  const Color.fromARGB(255, 255, 255, 255),
-                ])),
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [Colors.black, Colors.transparent]),
+            ),
+            height: MediaQuery.of(context).size.height * 0.5,
           ),
         ),
         Container(
@@ -71,7 +76,10 @@ class _CoverPageState extends State<CoverPage> {
                   width: double.infinity,
                 ),
                 onTap: () {
-                  Navigator.pushNamed(context, '/signIn');
+                  // Navigator.pushNamed(context, '/signIn');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return BoardingScreen();
+                  }));
                 },
               )
             ],

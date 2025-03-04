@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:soch/services/auth_service.dart';
-import 'package:soch/ui/components/navbar.dart';
 import 'package:soch/ui/routes/home.dart';
 import 'package:soch/ui/routes/profile.dart';
 import 'package:soch/ui/routes/settings.dart';
@@ -53,6 +52,12 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: pages[_index],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/payhome');
+        },
+        child: Icon(Icons.android_outlined),
+      ),
     );
   }
 }

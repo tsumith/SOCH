@@ -61,7 +61,7 @@ class AuthService {
 
   Future<void> signIn(String email, String password) async {
     try {
-      await supabase!.auth.signInWithPassword(
+      await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
